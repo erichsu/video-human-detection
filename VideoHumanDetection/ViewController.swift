@@ -94,7 +94,7 @@ final class ViewController: UIViewController {
     }
 
     private lazy var stopButton = UIButton().then {
-        $0.setImage(UIImage(systemName: "stop"), for: .normal)
+        $0.setImage(UIImage(systemName: "square.and.arrow.up"), for: .normal)
     }
 
     private func setupSubviews() {
@@ -187,9 +187,10 @@ final class ViewController: UIViewController {
         for i in 0 ..< boundingBoxViews.count {
             if i < predictions.count {
                 let prediction = predictions[i]
+                let fittedSize = videoCapture.videoDimension?.aspectFit(to: view.bounds.size) ?? .zero
+                let width = fittedSize.width
+                let height = fittedSize.height
 
-                let width = view.bounds.width
-                let height = width * 9 / 16
                 let offsetY = (view.bounds.height - height) / 2
                 let scale = CGAffineTransform.identity.scaledBy(x: width, y: height)
                 let transform = CGAffineTransform(scaleX: 1, y: -1).translatedBy(x: 0, y: -height - offsetY)

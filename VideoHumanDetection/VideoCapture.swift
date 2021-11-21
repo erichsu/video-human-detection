@@ -26,10 +26,19 @@ class VideoCapture: NSObject {
     var readerOutput: AVAssetReaderTrackOutput?
     let queue = DispatchQueue(label: "org.yao.asset-reader-queue")
 
+    var videoDimension: CGSize? {
+        guard let videoTrack = asset?.tracks(withMediaType: .video).first else { return nil }
+        let videoDesc = videoTrack.formatDescriptions.first as! CMVideoFormatDescription
+        let dimension = CMVideoFormatDescriptionGetPresentationDimensions(videoDesc, usePixelAspectRatio: true, useCleanAperture: true)
+        return dimension
+    }
+    private var asset: AVAsset?
+
     func setUp(
         _ asset: AVAsset?,
         completion: @escaping (Bool) -> Void
     ) {
+        self.asset = asset
         queue.async {
             let success = self.setupAsset(asset)
             DispatchQueue.main.async {
@@ -69,6 +78,7 @@ class VideoCapture: NSObject {
             let settings: [String: Any] = [
                 kCVPixelBufferPixelFormatTypeKey as String: NSNumber(value: kCVPixelFormatType_32BGRA)
             ]
+
             let output = AVAssetReaderTrackOutput(track: videoTrack, outputSettings: settings)
             readerOutput = output
             assetReader.add(output)
