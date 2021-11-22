@@ -34,7 +34,7 @@ class VideoCapture: NSObject {
     }
     private var asset: AVAsset?
 
-    func setUp(
+    func setup(
         _ asset: AVAsset?,
         completion: @escaping (Bool) -> Void
     ) {
@@ -52,18 +52,23 @@ class VideoCapture: NSObject {
         if reader?.status != .reading {
             reader?.startReading()
             queue.async {
-                while let buffer = self.readerOutput?.copyNextSampleBuffer() {
+                while self.reader?.status == .reading, let buffer = self.readerOutput?.copyNextSampleBuffer() {
                     self.delegate?.videoCapture(self, didCaptureVideoFrame: buffer)
-                    self.previewLayer.enqueue(buffer)
+                    DispatchQueue.main.async {
+                        self.previewLayer.enqueue(buffer)
+                    }
                 }
             }
         }
     }
 
     func stop() {
+        print("try to stop reading")
         if reader?.status == .reading {
             reader?.cancelReading()
+            print("reading canceled")
         }
+        self.previewLayer.flushAndRemoveImage()
     }
 
     // MARK: Private

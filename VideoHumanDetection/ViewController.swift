@@ -44,20 +44,28 @@ final class ViewController: UIViewController {
         }
     }()
 
+    lazy var recorder = DetectionRecorder(asset: selectedAsset!)
+
     var boundingBoxViews = [BoundingBoxView]()
     var currentBuffer: CVPixelBuffer?
+    var currentTimeCode: CMTime?
     var colors: [String: UIColor] = [:]
     var selectedAsset: AVURLAsset?
 
     override func viewDidLoad() {
         super.viewDidLoad()
         setupSubviews()
-        setUpBoundingBoxViews()
+        setupBoundingBoxViews()
+        requestPhotoLibraryPermission()
     }
 
     func predict(sampleBuffer: CMSampleBuffer) {
         if currentBuffer == nil, let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) {
             currentBuffer = pixelBuffer
+
+            if let timeInfos = try? sampleBuffer.sampleTimingInfos(), let time = timeInfos.first {
+                currentTimeCode = time.presentationTimeStamp
+            }
 
             // Get additional info from the camera.
             var options: [VNImageOption: Any] = [:]
@@ -85,21 +93,31 @@ final class ViewController: UIViewController {
     }
 
     private lazy var openButton = UIButton().then {
+        $0.setImage(UIImage(systemName: "photo"), for: .normal)
         $0.setTitle("Open video", for: .normal)
         $0.setTitleColor(UIColor.tintColor, for: .normal)
     }
 
     private lazy var startButton = UIButton().then {
         $0.setImage(UIImage(systemName: "play"), for: .normal)
+        $0.setTitle("Preview", for: .normal)
+        $0.setTitleColor(UIColor.tintColor, for: .normal)
     }
 
-    private lazy var stopButton = UIButton().then {
+    private lazy var exportButton = UIButton().then {
         $0.setImage(UIImage(systemName: "square.and.arrow.up"), for: .normal)
+        $0.setTitle("Export", for: .normal)
+        $0.setTitleColor(UIColor.tintColor, for: .normal)
+    }
+
+    private func requestPhotoLibraryPermission() {
+        guard PHPhotoLibrary.authorizationStatus() != .authorized else { return }
+        PHPhotoLibrary.requestAuthorization { _ in }
     }
 
     private func setupSubviews() {
         let bottomStack = UIStackView(
-            arrangedSubviews: [openButton, startButton, stopButton],
+            arrangedSubviews: [openButton, startButton, exportButton],
             axis: .horizontal,
             distribution: .equalCentering
         )
@@ -120,6 +138,12 @@ final class ViewController: UIViewController {
                 self.startReadAsset()
             }
             .disposed(by: bag)
+
+        exportButton.rx.tap
+            .bind(with: self) { `self`, _ in
+                self.recorder.exportVideos()
+            }
+            .disposed(by: bag)
     }
 
     private func openLibrary() {
@@ -131,9 +155,12 @@ final class ViewController: UIViewController {
     }
 
     private func startReadAsset() {
+        videoCapture.stop()
         videoCapture.delegate = self
-        videoCapture.setUp(selectedAsset) { success in
+        videoCapture.setup(selectedAsset) { success in
             if success {
+                self.previewImageView.layer.sublayers?.forEach { $0.removeFromSuperlayer() }
+
                 self.previewImageView.layer.addSublayer(self.videoCapture.previewLayer)
                 self.videoCapture.previewLayer.frame = self.previewImageView.bounds
                 print("loaded preview layer")
@@ -141,13 +168,12 @@ final class ViewController: UIViewController {
                 for box in self.boundingBoxViews {
                     box.addToLayer(self.previewImageView.layer)
                 }
-
                 self.videoCapture.start()
             }
         }
     }
 
-    private func setUpBoundingBoxViews() {
+    private func setupBoundingBoxViews() {
         for _ in 0 ..< maxBoundingBoxViews {
             boundingBoxViews.append(BoundingBoxView())
         }
@@ -175,7 +201,8 @@ final class ViewController: UIViewController {
             if let results = request.results as? [VNRecognizedObjectObservation] {
                 let personObjects = results
                     .filter { $0.labels[0].identifier == "person" }
-                print("find persons: \(personObjects.count)")
+//                print("find persons: \(personObjects.count)")
+
                 self.show(predictions: personObjects)
             } else {
                 self.show(predictions: [])
@@ -187,6 +214,7 @@ final class ViewController: UIViewController {
         for i in 0 ..< boundingBoxViews.count {
             if i < predictions.count {
                 let prediction = predictions[i]
+
                 let fittedSize = videoCapture.videoDimension?.aspectFit(to: view.bounds.size) ?? .zero
                 let width = fittedSize.width
                 let height = fittedSize.height
@@ -204,7 +232,8 @@ final class ViewController: UIViewController {
                 // Show the bounding box.
                 let label = String(format: "%@ %.1f", bestClass, confidence * 100)
                 let color = colors[bestClass] ?? UIColor.red
-                print("label:\(label), rect:\(rect)")
+                print("label:\(label), rect:\(rect), \(currentTimeCode?.seconds ?? 0)")
+                recorder.detectedObjects.append(DetectInfo(time: currentTimeCode ?? .zero, label: label, frame: rect, color: color))
                 boundingBoxViews[i].show(frame: rect, label: label, color: color)
             } else {
                 boundingBoxViews[i].hide()
@@ -219,10 +248,15 @@ extension ViewController: PHPickerViewControllerDelegate {
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
         guard let result = results.first else { return }
 
-        result.itemProvider.loadItem(forTypeIdentifier: UTType.movie.identifier, options: nil) { item, error in
-            print("loading....\(item), \(error)")
-            if let url = item as? URL {
-                self.selectedAsset = AVURLAsset(url: url)
+        result.itemProvider.loadInPlaceFileRepresentation(forTypeIdentifier: UTType.movie.identifier) { url, _, error in
+
+            if let url = url {
+                print("loading....\(url)")
+                DispatchQueue.main.sync {
+                    self.selectedAsset = AVURLAsset(url: url)
+                }
+            } else {
+                print("loading failed", error as Any)
             }
         }
         picker.dismiss(animated: true)
@@ -234,5 +268,6 @@ extension ViewController: PHPickerViewControllerDelegate {
 extension ViewController: VideoCaptureDelegate {
     func videoCapture(_ capture: VideoCapture, didCaptureVideoFrame sampleBuffer: CMSampleBuffer) {
         predict(sampleBuffer: sampleBuffer)
+//        recorder.appendBuffer(sampleBuffer)
     }
 }

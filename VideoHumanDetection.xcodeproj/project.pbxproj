@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0742E45F274B75CA0011EC4A /* ProgressHUD in Frameworks */ = {isa = PBXBuildFile; productRef = 0742E45E274B75CA0011EC4A /* ProgressHUD */; };
 		0769E598274AA4C200C68CCE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0769E597274AA4C200C68CCE /* AppDelegate.swift */; };
 		0769E59A274AA4C200C68CCE /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0769E599274AA4C200C68CCE /* SceneDelegate.swift */; };
 		0769E59C274AA4C200C68CCE /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0769E59B274AA4C200C68CCE /* ViewController.swift */; };
@@ -22,6 +23,7 @@
 		0769E5BE274AA5C300C68CCE /* MobileNetV2_SSDLite.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 0769E5BB274AA5C300C68CCE /* MobileNetV2_SSDLite.mlmodel */; };
 		0769E5BF274AA5C300C68CCE /* BoundingBoxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0769E5BC274AA5C300C68CCE /* BoundingBoxView.swift */; };
 		0769E5C0274AA5C300C68CCE /* VideoCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0769E5BD274AA5C300C68CCE /* VideoCapture.swift */; };
+		0769E5C2274ACD4700C68CCE /* DetectionRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0769E5C1274ACD4700C68CCE /* DetectionRecorder.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,6 +38,7 @@
 		0769E5BB274AA5C300C68CCE /* MobileNetV2_SSDLite.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = MobileNetV2_SSDLite.mlmodel; sourceTree = "<group>"; };
 		0769E5BC274AA5C300C68CCE /* BoundingBoxView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoundingBoxView.swift; sourceTree = "<group>"; };
 		0769E5BD274AA5C300C68CCE /* VideoCapture.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoCapture.swift; sourceTree = "<group>"; };
+		0769E5C1274ACD4700C68CCE /* DetectionRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectionRecorder.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -44,6 +47,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0769E5B1274AA50900C68CCE /* RxSwift in Frameworks */,
+				0742E45F274B75CA0011EC4A /* ProgressHUD in Frameworks */,
 				0769E5BA274AA5A700C68CCE /* Then in Frameworks */,
 				0769E5B4274AA51400C68CCE /* SwifterSwift in Frameworks */,
 				0769E5AF274AA50900C68CCE /* RxRelay in Frameworks */,
@@ -79,6 +83,7 @@
 				0769E59B274AA4C200C68CCE /* ViewController.swift */,
 				0769E5BC274AA5C300C68CCE /* BoundingBoxView.swift */,
 				0769E5BD274AA5C300C68CCE /* VideoCapture.swift */,
+				0769E5C1274ACD4700C68CCE /* DetectionRecorder.swift */,
 				0769E5BB274AA5C300C68CCE /* MobileNetV2_SSDLite.mlmodel */,
 				0769E59D274AA4C200C68CCE /* Main.storyboard */,
 				0769E5A0274AA4C300C68CCE /* Assets.xcassets */,
@@ -111,6 +116,7 @@
 				0769E5B3274AA51400C68CCE /* SwifterSwift */,
 				0769E5B6274AA56D00C68CCE /* SnapKit */,
 				0769E5B9274AA5A700C68CCE /* Then */,
+				0742E45E274B75CA0011EC4A /* ProgressHUD */,
 			);
 			productName = VideoHumanDetection;
 			productReference = 0769E594274AA4C200C68CCE /* VideoHumanDetection.app */;
@@ -145,6 +151,7 @@
 				0769E5B2274AA51400C68CCE /* XCRemoteSwiftPackageReference "SwifterSwift" */,
 				0769E5B5274AA56D00C68CCE /* XCRemoteSwiftPackageReference "SnapKit" */,
 				0769E5B8274AA5A600C68CCE /* XCRemoteSwiftPackageReference "Then" */,
+				0742E45D274B75CA0011EC4A /* XCRemoteSwiftPackageReference "ProgressHUD" */,
 			);
 			productRefGroup = 0769E595274AA4C200C68CCE /* Products */;
 			projectDirPath = "";
@@ -175,6 +182,7 @@
 			files = (
 				0769E59C274AA4C200C68CCE /* ViewController.swift in Sources */,
 				0769E5BE274AA5C300C68CCE /* MobileNetV2_SSDLite.mlmodel in Sources */,
+				0769E5C2274ACD4700C68CCE /* DetectionRecorder.swift in Sources */,
 				0769E5BF274AA5C300C68CCE /* BoundingBoxView.swift in Sources */,
 				0769E598274AA4C200C68CCE /* AppDelegate.swift in Sources */,
 				0769E5C0274AA5C300C68CCE /* VideoCapture.swift in Sources */,
@@ -330,6 +338,7 @@
 				DEVELOPMENT_TEAM = 66D3CJTRN4;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = VideoHumanDetection/Info.plist;
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "To export video";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -358,6 +367,7 @@
 				DEVELOPMENT_TEAM = 66D3CJTRN4;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = VideoHumanDetection/Info.plist;
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "To export video";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -400,6 +410,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		0742E45D274B75CA0011EC4A /* XCRemoteSwiftPackageReference "ProgressHUD" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/relatedcode/ProgressHUD";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 13.6.0;
+			};
+		};
 		0769E5AB274AA50900C68CCE /* XCRemoteSwiftPackageReference "RxSwift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ReactiveX/RxSwift";
@@ -435,6 +453,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		0742E45E274B75CA0011EC4A /* ProgressHUD */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0742E45D274B75CA0011EC4A /* XCRemoteSwiftPackageReference "ProgressHUD" */;
+			productName = ProgressHUD;
+		};
 		0769E5AC274AA50900C68CCE /* RxCocoa */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 0769E5AB274AA50900C68CCE /* XCRemoteSwiftPackageReference "RxSwift" */;
