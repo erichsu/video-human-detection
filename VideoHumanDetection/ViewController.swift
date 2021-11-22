@@ -48,6 +48,7 @@ final class ViewController: UIViewController {
 
     var boundingBoxViews = [BoundingBoxView]()
     var currentBuffer: CVPixelBuffer?
+    var latestBuffer: CMSampleBuffer!
     var currentTimeCode: CMTime?
     var colors: [String: UIColor] = [:]
     var selectedAsset: AVURLAsset?
@@ -60,6 +61,7 @@ final class ViewController: UIViewController {
     }
 
     func predict(sampleBuffer: CMSampleBuffer) {
+        latestBuffer = sampleBuffer
         if currentBuffer == nil, let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) {
             currentBuffer = pixelBuffer
 
@@ -140,7 +142,9 @@ final class ViewController: UIViewController {
             .disposed(by: bag)
 
         exportButton.rx.tap
-            .bind(with: self) { `self`, _ in
+            .bind(with: self) { _, _ in
+//                ProgressHUD.show()
+//                self.startReadAsset()
                 self.recorder.exportVideos()
             }
             .disposed(by: bag)
@@ -150,6 +154,7 @@ final class ViewController: UIViewController {
         var configuration = PHPickerConfiguration(photoLibrary: .shared())
         configuration.filter = PHPickerFilter.any(of: [.videos])
         let picker = PHPickerViewController(configuration: configuration)
+
         picker.delegate = self
         present(picker, animated: true)
     }
@@ -232,9 +237,17 @@ final class ViewController: UIViewController {
                 // Show the bounding box.
                 let label = String(format: "%@ %.1f", bestClass, confidence * 100)
                 let color = colors[bestClass] ?? UIColor.red
-                print("label:\(label), rect:\(rect), \(currentTimeCode?.seconds ?? 0)")
-                recorder.detectedObjects.append(DetectInfo(time: currentTimeCode ?? .zero, label: label, frame: rect, color: color))
+//                print("label:\(label), rect:\(rect), \(currentTimeCode.seconds ?? .zero)")
+
+                let currentTime = Int(currentTimeCode?.seconds ?? 0)
+                if recorder.predictions[currentTime] != nil {
+                    recorder.predictions[currentTime]?.append(PredictionInfo(label: label, frame: prediction.boundingBox, color: color))
+                } else {
+                    recorder.predictions[currentTime] = [PredictionInfo(label: label, frame: prediction.boundingBox, color: color)]
+                }
+
                 boundingBoxViews[i].show(frame: rect, label: label, color: color)
+
             } else {
                 boundingBoxViews[i].hide()
             }
@@ -247,19 +260,20 @@ final class ViewController: UIViewController {
 extension ViewController: PHPickerViewControllerDelegate {
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
         guard let result = results.first else { return }
+        guard let typeIdentifier = result.itemProvider.registeredTypeIdentifiers.first else { return }
 
-        result.itemProvider.loadInPlaceFileRepresentation(forTypeIdentifier: UTType.movie.identifier) { url, _, error in
+        result.itemProvider.loadInPlaceFileRepresentation(forTypeIdentifier: typeIdentifier) { url, _, error in
 
             if let url = url {
                 print("loading....\(url)")
                 DispatchQueue.main.sync {
                     self.selectedAsset = AVURLAsset(url: url)
+                    picker.dismiss(animated: true)
                 }
             } else {
                 print("loading failed", error as Any)
             }
         }
-        picker.dismiss(animated: true)
     }
 }
 
@@ -268,6 +282,5 @@ extension ViewController: PHPickerViewControllerDelegate {
 extension ViewController: VideoCaptureDelegate {
     func videoCapture(_ capture: VideoCapture, didCaptureVideoFrame sampleBuffer: CMSampleBuffer) {
         predict(sampleBuffer: sampleBuffer)
-//        recorder.appendBuffer(sampleBuffer)
     }
 }

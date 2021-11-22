@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0742E45F274B75CA0011EC4A /* ProgressHUD in Frameworks */ = {isa = PBXBuildFile; productRef = 0742E45E274B75CA0011EC4A /* ProgressHUD */; };
+		0742E461274BECDC0011EC4A /* BundingBoxCompositor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0742E460274BECDC0011EC4A /* BundingBoxCompositor.swift */; };
 		0769E598274AA4C200C68CCE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0769E597274AA4C200C68CCE /* AppDelegate.swift */; };
 		0769E59A274AA4C200C68CCE /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0769E599274AA4C200C68CCE /* SceneDelegate.swift */; };
 		0769E59C274AA4C200C68CCE /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0769E59B274AA4C200C68CCE /* ViewController.swift */; };
@@ -27,6 +28,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0742E460274BECDC0011EC4A /* BundingBoxCompositor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundingBoxCompositor.swift; sourceTree = "<group>"; };
 		0769E594274AA4C200C68CCE /* VideoHumanDetection.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VideoHumanDetection.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0769E597274AA4C200C68CCE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0769E599274AA4C200C68CCE /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -82,6 +84,7 @@
 				0769E599274AA4C200C68CCE /* SceneDelegate.swift */,
 				0769E59B274AA4C200C68CCE /* ViewController.swift */,
 				0769E5BC274AA5C300C68CCE /* BoundingBoxView.swift */,
+				0742E460274BECDC0011EC4A /* BundingBoxCompositor.swift */,
 				0769E5BD274AA5C300C68CCE /* VideoCapture.swift */,
 				0769E5C1274ACD4700C68CCE /* DetectionRecorder.swift */,
 				0769E5BB274AA5C300C68CCE /* MobileNetV2_SSDLite.mlmodel */,
@@ -184,6 +187,7 @@
 				0769E5BE274AA5C300C68CCE /* MobileNetV2_SSDLite.mlmodel in Sources */,
 				0769E5C2274ACD4700C68CCE /* DetectionRecorder.swift in Sources */,
 				0769E5BF274AA5C300C68CCE /* BoundingBoxView.swift in Sources */,
+				0742E461274BECDC0011EC4A /* BundingBoxCompositor.swift in Sources */,
 				0769E598274AA4C200C68CCE /* AppDelegate.swift in Sources */,
 				0769E5C0274AA5C300C68CCE /* VideoCapture.swift in Sources */,
 				0769E59A274AA4C200C68CCE /* SceneDelegate.swift in Sources */,
@@ -338,6 +342,7 @@
 				DEVELOPMENT_TEAM = 66D3CJTRN4;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = VideoHumanDetection/Info.plist;
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "To export video";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "To export video";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
@@ -367,6 +372,7 @@
 				DEVELOPMENT_TEAM = 66D3CJTRN4;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = VideoHumanDetection/Info.plist;
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "To export video";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "To export video";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;

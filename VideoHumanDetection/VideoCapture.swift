@@ -8,6 +8,7 @@
 import AVFoundation
 import CoreVideo
 import UIKit
+import ProgressHUD
 
 // MARK: - VideoCaptureDelegate
 
@@ -32,7 +33,6 @@ class VideoCapture: NSObject {
         let dimension = CMVideoFormatDescriptionGetPresentationDimensions(videoDesc, usePixelAspectRatio: true, useCleanAperture: true)
         return dimension
     }
-    private var asset: AVAsset?
 
     func setup(
         _ asset: AVAsset?,
@@ -48,13 +48,12 @@ class VideoCapture: NSObject {
     }
 
     func start() {
-
         if reader?.status != .reading {
             reader?.startReading()
             queue.async {
                 while self.reader?.status == .reading, let buffer = self.readerOutput?.copyNextSampleBuffer() {
                     self.delegate?.videoCapture(self, didCaptureVideoFrame: buffer)
-                    DispatchQueue.main.async {
+                    if self.previewLayer.isReadyForMoreMediaData {
                         self.previewLayer.enqueue(buffer)
                     }
                 }
@@ -68,10 +67,12 @@ class VideoCapture: NSObject {
             reader?.cancelReading()
             print("reading canceled")
         }
-        self.previewLayer.flushAndRemoveImage()
+        previewLayer.flushAndRemoveImage()
     }
 
     // MARK: Private
+
+    private var asset: AVAsset?
 
     private func setupAsset(_ asset: AVAsset?) -> Bool {
         guard let asset = asset else { return false }
@@ -90,6 +91,7 @@ class VideoCapture: NSObject {
 
             return true
         } catch {
+            ProgressHUD.showFailed(error.localizedDescription, interaction: true)
             print(error)
             return false
         }
